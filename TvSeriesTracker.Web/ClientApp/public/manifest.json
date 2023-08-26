@@ -1,6 +1,6 @@
 {
-  "short_name": "TvSeriesTracker.Web",
-  "name": "TvSeriesTracker.Web",
+  "short_name": "TvSeriesTracker",
+  "name": "TV Series Tracker",
   "icons": [
     {
       "src": "favicon.ico",

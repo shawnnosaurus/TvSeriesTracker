@@ -3,11 +3,11 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
-import * as serviceWorkerRegistration from './serviceWorkerRegistration';
-import reportWebVitals from './reportWebVitals';
+import * as serviceWorkerRegistration from './shared/serviceWorkerRegistration';
+import reportWebVitals from './shared/reportWebVitals';
 
-const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
-const rootElement = document.getElementById('root');
+const baseUrl = document.querySelector('base').getAttribute('href');
+const rootElement = document.querySelector('#root');
 const root = createRoot(rootElement);
 
 root.render(
