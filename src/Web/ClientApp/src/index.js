@@ -3,8 +3,8 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
-import * as serviceWorkerRegistration from './shared/serviceWorkerRegistration';
-import reportWebVitals from './shared/reportWebVitals';
+import * as serviceWorkerRegistration from './services/serviceWorkerRegistration';
+import reportWebVitals from './services/reportWebVitals';
 
 const baseUrl = document.querySelector('base').getAttribute('href');
 const rootElement = document.querySelector('#root');
