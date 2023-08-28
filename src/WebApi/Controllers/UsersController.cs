@@ -6,7 +6,6 @@ using WebApi.Authorization;
 using WebApi.Dto.Users;
 using WebApi.Services;
 
-[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class UsersController : ControllerBase
@@ -18,7 +17,6 @@ public class UsersController : ControllerBase
         _userService = userService;
     }
 
-    [AllowAnonymous]
     [HttpPost("authenticate")]
     public IActionResult Authenticate(AuthenticateRequest model)
     {
@@ -33,7 +31,6 @@ public class UsersController : ControllerBase
         }
     }
 
-    [AllowAnonymous]
     [HttpPost("register")]
     public IActionResult Register(RegisterRequest model)
     {
@@ -48,31 +45,11 @@ public class UsersController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpGet]
     public IActionResult GetAll()
     {
         var users = _userService.GetAll();
         return Ok(users);
-    }
-
-    [HttpGet("{id}")]
-    public IActionResult GetById(int id)
-    {
-        var user = _userService.GetById(id);
-        return Ok(user);
-    }
-
-    [HttpPut("{id}")]
-    public IActionResult Update(int id, UpdateRequest model)
-    {
-        _userService.Update(id, model);
-        return Ok(new { message = "User updated successfully" });
-    }
-
-    [HttpDelete("{id}")]
-    public IActionResult Delete(int id)
-    {
-        _userService.Delete(id);
-        return Ok(new { message = "User deleted successfully" });
     }
 }
