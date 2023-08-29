@@ -12,18 +12,12 @@ public class AutoMapperProfile : Profile
 
         CreateMap<RegisterRequest, User>();
 
-        CreateMap<UpdateRequest, User>()
-            .ForAllMembers(x => x.Condition(
-                (src, dest, prop) =>
-                {
-                    if (prop == null) return false;
-                    if (prop.GetType() == typeof(string) && string.IsNullOrEmpty((string)prop)) return false;
+        CreateMap<UpdateRequest, User>();
 
-                    return true;
-                }
-            ));
-
+        CreateMap<Dto.Series.CreateRequest, Series>();
         CreateMap<Dto.Series.UpdateRequest, Series>();
+
+        CreateMap<Dto.Episode.CreateRequest, Episode>();
         CreateMap<Dto.Episode.UpdateRequest, Episode>();
     }
 }

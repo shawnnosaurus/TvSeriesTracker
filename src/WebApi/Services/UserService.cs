@@ -7,12 +7,14 @@ using WebApi.Entities;
 using WebApi.Helpers;
 using WebApi.Dto.Users;
 using System.Security.Authentication;
+using System.IdentityModel.Tokens.Jwt;
 
 public interface IUserService
 {
     AuthenticateResponse Authenticate(AuthenticateRequest model);
     IEnumerable<User> GetAll();
     User GetById(int id);
+    User GetByRequestHeaders(IHeaderDictionary headers);
     void Register(RegisterRequest model);
     void Update(int id, UpdateRequest model);
     void Delete(int id);
@@ -56,6 +58,25 @@ public class UserService : IUserService
         return GetUser(id);
     }
 
+    public User GetByRequestHeaders(IHeaderDictionary headers)
+    {
+        if (headers.TryGetValue("Authorization", out var authHeaderValues))
+        {
+            var authHeaderValue = authHeaderValues.FirstOrDefault();
+
+            if (!string.IsNullOrEmpty(authHeaderValue) && authHeaderValue.StartsWith("Bearer "))
+            {
+                var bearerToken = authHeaderValue["Bearer ".Length..];
+
+                var handler = new JwtSecurityTokenHandler();
+                var jwtSecurityToken = handler.ReadJwtToken(bearerToken);
+                var userId = int.Parse(jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == "id")?.Value);
+                return GetUser(userId);
+            }
+        }
+        return null;
+    }
+
     public void Register(RegisterRequest model)
     {
         if (_context.Users.Any(x => x.Username == model.Username))
@@ -72,9 +93,6 @@ public class UserService : IUserService
     public void Update(int id, UpdateRequest model)
     {
         var user = GetUser(id);
-
-        if (model.Username != user.Username && _context.Users.Any(x => x.Username == model.Username))
-            throw new InvalidCredentialException("Username '" + model.Username + "' is already taken");
 
         if (!string.IsNullOrEmpty(model.Password))
             user.PasswordHash = BCrypt.HashPassword(model.Password);

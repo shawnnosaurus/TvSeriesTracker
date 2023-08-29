@@ -4,13 +4,16 @@ using AutoMapper;
 using WebApi.Entities;
 using WebApi.Helpers;
 using WebApi.Dto.Series;
+using System.Text.RegularExpressions;
 
 public interface ISeriesService
 {
     IEnumerable<Series> GetAll(int userId);
     Series GetById(int id);
-    void Create(Series model);
-    void Update(int id, UpdateRequest model);
+    bool Exists(CreateRequest model);
+    bool Exists(UpdateRequest model);
+    void Create(CreateRequest model);
+    void Update(UpdateRequest model);
 }
 
 public class SeriesService : ISeriesService
@@ -26,30 +29,36 @@ public class SeriesService : ISeriesService
         _mapper = mapper;
     }
 
-    public IEnumerable<Series> GetAll(int userId)
-    {
-        return _context.Series.Where(series => series.User.Id == userId);
-    }
+    public IEnumerable<Series> GetAll(int userId) =>
+        _context.Series.ToList();
 
-    public Series GetById(int id)
-    {
-        return GetSeries(id);
-    }
+    public Series GetById(int id) =>
+        GetSeries(id);
 
-    public void Create(Series model)
+    public bool Exists(CreateRequest model) =>
+        _context.Series.AsEnumerable()
+            .Any(s => Regex.IsMatch(s.Title, model.Title, RegexOptions.IgnoreCase));
+
+    public bool Exists(UpdateRequest model) =>
+        _context.Series.AsEnumerable()
+            .Any(s => Regex.IsMatch(s.Title, model.Title, RegexOptions.IgnoreCase));
+
+    public void Create(CreateRequest model)
     {
         var series = _mapper.Map<Series>(model);
 
         _context.Series.Add(series);
+
         _context.SaveChanges();
     }
 
-    public void Update(int id, UpdateRequest model)
+    public void Update(UpdateRequest model)
     {
-        var series = GetSeries(id);
+        var series = GetSeries(model.Id);
 
         _mapper.Map(model, series);
         _context.Series.Update(series);
+
         _context.SaveChanges();
     }
 
