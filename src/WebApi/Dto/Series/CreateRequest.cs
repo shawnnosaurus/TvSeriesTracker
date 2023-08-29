@@ -1,7 +1,8 @@
+using WebApi.Entities;
+
 namespace WebApi.Dto.Series;
 
-public class UpdateRequest
+public class CreateRequest
 {
-    public int Id { get; set; }
     public string Title { get; set; }
 }

@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 
 import WebApiClient from '../../services/webApiClient';
 import useStore from '../../hooks/stateStore';
-import './styles.css';
 
 const NavMenu = () => {
     const userAccount = useStore((state) => state.userAccount);
@@ -11,7 +10,7 @@ const NavMenu = () => {
     return (
         <header>
             <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3" container light>
-                <NavbarBrand tag={Link} to="/">TV Series Tracker</NavbarBrand>
+                <NavbarBrand tag={Link} to="/" style={{ fontWeight: 700 }}>{userAccount?.firstName && `${userAccount?.firstName}'s `}TV Series Tracker</NavbarBrand>
                 <Collapse className="d-sm-inline-flex flex-sm-row-reverse" navbar>
                     <ul className="navbar-nav flex-grow">
                         <NavItem>

@@ -12,15 +12,15 @@ export default class App extends Component {
             <Layout>
                 <Routes>
                     <Route element={<PrivateRoutes />}>
-                        {AppRoutes.filter(r => !!r?.restricted).map((route, index) => {
+                        {AppRoutes.filter(r => !r?.anonymous).map((route, index) => {
                             const { element, ...rest } = route;
                             return <Route key={index} {...rest} element={element} />;
                         })}</Route>
-                    {AppRoutes.filter(r => !r?.restricted).map((route, index) => {
+                    {AppRoutes.filter(r => !!r?.anonymous).map((route, index) => {
                         const { element, ...rest } = route;
                         return <Route key={index} {...rest} element={element} />;
                     })}
-                    <Route path="*" element={<h1>404: Page Not Found</h1>} />;
+                    <Route path="*" element={<h1 className="text-center">404: Page Not Found</h1>} />;
                 </Routes>
             </Layout>
         );

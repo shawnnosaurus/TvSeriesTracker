@@ -8,8 +8,9 @@ public class User
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string Username { get; set; }
-    public ICollection<Series> Series { get; set; }
 
     [JsonIgnore]
     public string PasswordHash { get; set; }
+
+    public ICollection<WatchedEpisode> EpisodesWatched { get; set; } = new List<WatchedEpisode>();
 }

@@ -46,13 +46,93 @@ export default class WebApiClient {
         return true;
     }
 
-    static async getAllSeries({ userId }) {
+    static async getSeries(id) {
         const requestOptions = {
             method: 'GET',
             headers: this._headers,
-            body: { userId },
+        };
+        return await this._request(`${this.BASE_URL}/api/series/${id}`, requestOptions);
+    }
+
+    static async getAllSeries() {
+        const requestOptions = {
+            method: 'GET',
+            headers: this._headers,
         };
         return await this._request(`${this.BASE_URL}/api/series`, requestOptions);
+    }
+
+    static async createSeries({ title }) {
+        const requestOptions = {
+            method: 'POST',
+            headers: this._headers,
+            body: { title },
+        };
+
+        return await this._request(`${this.BASE_URL}/api/series/create`, requestOptions);
+    }
+
+    static async updateSeries({ id, title }) {
+        const requestOptions = {
+            method: 'PUT',
+            headers: this._headers,
+            body: { id, title },
+        };
+
+        return await this._request(`${this.BASE_URL}/api/series/update`, requestOptions);
+    }
+
+    static async getAllEpisodes(seriesId) {
+        const requestOptions = {
+            method: 'GET',
+            headers: this._headers,
+        };
+        return await this._request(`${this.BASE_URL}/api/episode/series/${seriesId}`, requestOptions);
+    }
+
+    static async createEpisode({ seriesId, title, season, episodeNumber }) {
+        const requestOptions = {
+            method: 'POST',
+            headers: this._headers,
+            body: { seriesId, title, season, episodeNumber },
+        };
+
+        return await this._request(`${this.BASE_URL}/api/episode/create`, requestOptions);
+    }
+
+    static async updateEpisode({ id, title, season, episodeNumber }) {
+        const requestOptions = {
+            method: 'PUT',
+            headers: this._headers,
+            body: { id, title, season, episodeNumber },
+        };
+
+        return await this._request(`${this.BASE_URL}/api/episode/update`, requestOptions);
+    }
+
+    static async getEpisode(id) {
+        const requestOptions = {
+            method: 'GET',
+            headers: this._headers,
+        };
+        return await this._request(`${this.BASE_URL}/api/episode/${id}`, requestOptions);
+    }
+
+    static async getAllWatchedEpisodes(seriesId) {
+        const requestOptions = {
+            method: 'GET',
+            headers: this._headers,
+        };
+        return await this._request(`${this.BASE_URL}/api/episode/watched/series/${seriesId}`, requestOptions);
+    }
+
+    static async setWatchedEpisode({ id, watched }) {
+        const requestOptions = {
+            method: 'PUT',
+            headers: this._headers,
+            body: { id, watched },
+        };
+        return await this._request(`${this.BASE_URL}/api/episode/watched`, requestOptions);
     }
 
     static _request(url, options) {
@@ -68,7 +148,7 @@ export default class WebApiClient {
         throw new WebApiClientError(err);
     }
 
-    static _unauthHandler(err) {
+    static _unauthHandler(_err) {
         this.userLogout();
     }
 }
