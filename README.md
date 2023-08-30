@@ -42,7 +42,7 @@
 
   <summary>Setup Steps...</summary>
 
-  All dependencies(server, client & database) should install on initial build of the solution.
+  All dependencies(server, client & database) should install automatically on initial build of the solution.
   There is no seed for the db, so the data has to be manually created via the UI.
 
 </details>
@@ -59,19 +59,7 @@
   Stores all created/updated series and episodes, with a unique watched list per user.
   ![Watched Episodes](docs/img/watchedEpisodes.jpg)
 
-  All user specific lookups, first decode the user auth token for the unique user ID, to not access data from another account.
-
-</details>
-
-<details>
-
-  <summary>Improvements Backlog...</summary>
-
-  - Fix the login redirect which is meant to take the user back to their original route.
-  - Combine multiple API calls into single requests.
-  - Integrate IMDB API for ease of data capturing.
-  - Split the backend business logic, from the domain and infrustructure logic.
-  - Store secrets variables in a secrets manager or vault.
-  - Create deployment scripts and ship to the cloud.
+  All user specific lookups, first decode the user auth token for the unique user GUID, to limit brute force access from another account.
+  ![Unique Watched Episodes](docs/img/differentUser.jpg)
 
 </details>

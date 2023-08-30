@@ -11,7 +11,8 @@ using WebApi.Helpers;
 public interface IJwtUtils
 {
     public string GenerateToken(User user);
-    public int? ValidateToken(string token);
+    public Guid? ValidateToken(string token);
+    public Guid? GetUserIdFromeRequestHeaders(IHeaderDictionary headers);
 }
 
 public class JwtUtils : IJwtUtils
@@ -37,7 +38,7 @@ public class JwtUtils : IJwtUtils
         return tokenHandler.WriteToken(token);
     }
 
-    public int? ValidateToken(string token)
+    public Guid? ValidateToken(string token)
     {
         if (token == null) 
             return null;
@@ -52,12 +53,11 @@ public class JwtUtils : IJwtUtils
                 IssuerSigningKey = new SymmetricSecurityKey(key),
                 ValidateIssuer = false,
                 ValidateAudience = false,
-                // set clockskew to zero so tokens expire exactly at token expiration time (instead of 5 minutes later)
                 ClockSkew = TimeSpan.Zero
             }, out SecurityToken validatedToken);
 
             var jwtToken = (JwtSecurityToken)validatedToken;
-            var userId = int.Parse(jwtToken.Claims.First(x => x.Type == "id").Value);
+            var userId = Guid.Parse(jwtToken.Claims.First(x => x.Type == "id").Value);
 
             return userId;
         }
@@ -65,5 +65,23 @@ public class JwtUtils : IJwtUtils
         {
             return null;
         }
+    }
+
+    public Guid? GetUserIdFromeRequestHeaders(IHeaderDictionary headers)
+    {
+        if (headers.TryGetValue("Authorization", out var authHeaderValues))
+        {
+            var authHeaderValue = authHeaderValues.First();
+
+            if (!string.IsNullOrEmpty(authHeaderValue) && authHeaderValue.StartsWith("Bearer "))
+            {
+                var bearerToken = authHeaderValue["Bearer ".Length..];
+
+                var handler = new JwtSecurityTokenHandler();
+                var jwtSecurityToken = handler.ReadJwtToken(bearerToken);
+                return Guid.Parse(jwtSecurityToken.Claims.First(c => c.Type == "id")?.Value);
+            }
+        }
+        return null;
     }
 }

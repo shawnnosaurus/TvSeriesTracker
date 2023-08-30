@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 public interface ISeriesService
 {
-    IEnumerable<Series> GetAll(int userId);
+    IEnumerable<Series> GetAll(Guid userId);
     Series GetById(int id);
     bool Exists(CreateRequest model);
     bool Exists(UpdateRequest model);
@@ -29,7 +29,7 @@ public class SeriesService : ISeriesService
         _mapper = mapper;
     }
 
-    public IEnumerable<Series> GetAll(int userId) =>
+    public IEnumerable<Series> GetAll(Guid userId) =>
         _context.Series.ToList();
 
     public Series GetById(int id) =>
