@@ -7,17 +7,16 @@ using WebApi.Entities;
 using WebApi.Helpers;
 using WebApi.Dto.Users;
 using System.Security.Authentication;
-using System.IdentityModel.Tokens.Jwt;
 
 public interface IUserService
 {
     AuthenticateResponse Authenticate(AuthenticateRequest model);
     IEnumerable<User> GetAll();
-    User GetById(int id);
+    User GetById(Guid id);
     User GetByRequestHeaders(IHeaderDictionary headers);
     void Register(RegisterRequest model);
-    void Update(int id, UpdateRequest model);
-    void Delete(int id);
+    void Update(Guid id, UpdateRequest model);
+    void Delete(Guid id);
 }
 
 public class UserService : IUserService
@@ -48,33 +47,18 @@ public class UserService : IUserService
         return response;
     }
 
-    public IEnumerable<User> GetAll()
-    {
-        return _context.Users;
-    }
+    public IEnumerable<User> GetAll() => 
+        _context.Users;
 
-    public User GetById(int id)
-    {
-        return GetUser(id);
-    }
+    public User GetById(Guid id) => 
+        GetUser(id);
 
     public User GetByRequestHeaders(IHeaderDictionary headers)
     {
-        if (headers.TryGetValue("Authorization", out var authHeaderValues))
-        {
-            var authHeaderValue = authHeaderValues.FirstOrDefault();
+        var userId = _jwtUtils.GetUserIdFromeRequestHeaders(headers);
+        if (userId == null) return null;
 
-            if (!string.IsNullOrEmpty(authHeaderValue) && authHeaderValue.StartsWith("Bearer "))
-            {
-                var bearerToken = authHeaderValue["Bearer ".Length..];
-
-                var handler = new JwtSecurityTokenHandler();
-                var jwtSecurityToken = handler.ReadJwtToken(bearerToken);
-                var userId = int.Parse(jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == "id")?.Value);
-                return GetUser(userId);
-            }
-        }
-        return null;
+        return GetUser((Guid)userId);
     }
 
     public void Register(RegisterRequest model)
@@ -90,7 +74,7 @@ public class UserService : IUserService
         _context.SaveChanges();
     }
 
-    public void Update(int id, UpdateRequest model)
+    public void Update(Guid id, UpdateRequest model)
     {
         var user = GetUser(id);
 
@@ -102,17 +86,16 @@ public class UserService : IUserService
         _context.SaveChanges();
     }
 
-    public void Delete(int id)
+    public void Delete(Guid id)
     {
         var user = GetUser(id);
         _context.Users.Remove(user);
         _context.SaveChanges();
     }
 
-    private User GetUser(int id)
+    private User GetUser(Guid id)
     {
         var user = _context.Users.Find(id);
-        if (user == null) throw new KeyNotFoundException("User not found");
-        return user;
+        return user ?? throw new KeyNotFoundException("User not found");
     }
 }

@@ -15,7 +15,7 @@ const EpisodeUpdate = () => {
             WebApiClient.getSeries(seriesId).then(setSeries);
             WebApiClient.getEpisode(episodeId).then(setEpisode);
         }
-    }, [episodeId])
+    }, [seriesId, episodeId])
 
     if (!series?.id || !episode?.id) return <span className="spinner-border spinner-border-lg align-center text-center"></span>;
 
